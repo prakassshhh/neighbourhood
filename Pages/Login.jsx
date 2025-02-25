@@ -2,13 +2,13 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
-import Link from "next/link";
+import { useRouter } from 'next/navigation';
 
 export default function Login({ onLogin, onToggle }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loginSuccess, setLoginSuccess] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,24 +25,27 @@ export default function Login({ onLogin, onToggle }) {
       const userDoc = await getDoc(doc(db, "users", user.uid));
       if (!userDoc.exists()) {
         setError("User not found. Please sign up.");
-        onToggle(); // Redirect to signup page
+        onToggle();
         return;
       }
 
-      onLogin(); // Call the onLogin callback
-      setLoginSuccess(true); // Set login success to true
+      const userData = userDoc.data();
+      onLogin(userData.role);
+
+      // Store user role in localStorage for persistence
+      localStorage.setItem('userRole', userData.role);
+      
+      // Navigate based on role
+      if (userData.role === "committee_member") {
+        window.location.href = "/committee-dashboard";
+      } else {
+        window.location.href = "/resident-dashboard";
+      }
+
     } catch (error) {
       setError(error.message);
     }
   };
-
-  if (loginSuccess) {
-    return (
-      <Link href="/dashboard">
-        <a>Redirecting to Dashboard...</a>
-      </Link>
-    );
-  }
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
@@ -75,7 +78,7 @@ export default function Login({ onLogin, onToggle }) {
       <p className="mt-4 text-center">
         Don't have an account?{" "}
         <button onClick={onToggle} className="text-blue-500 hover:underline">
-          Sign up
+          Sign Up
         </button>
       </p>
     </div>
