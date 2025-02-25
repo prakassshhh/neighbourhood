@@ -8,6 +8,7 @@ export default function Login({ onLogin, onToggle }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,11 +30,19 @@ export default function Login({ onLogin, onToggle }) {
       }
 
       onLogin(); // Call the onLogin callback
-      navigate("/dashboard"); // Navigate to a dashboard or home page after login (adjust the path as needed)
+      setLoginSuccess(true); // Set login success to true
     } catch (error) {
       setError(error.message);
     }
   };
+
+  if (loginSuccess) {
+    return (
+      <Link href="/dashboard">
+        <a>Redirecting to Dashboard...</a>
+      </Link>
+    );
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">

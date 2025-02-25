@@ -15,12 +15,10 @@ export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
   const [showSignup, setShowSignup] = useState(false); // State to toggle between login and signup
 
-  // Handle login
   const handleLogin = () => {
     setIsLoggedIn(true); // Set login status to true
   };
 
-  // Handle signup
   const handleSignup = () => {
     setIsLoggedIn(true); // Set login status to true after signup
   };
@@ -38,7 +36,6 @@ export default function Home() {
     );
   }
 
-  // Render the main dashboard if logged in
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100">
       <div className="container mx-auto p-4">
